@@ -1,10 +1,10 @@
 import * as React from 'react';
 import Layout from '../components/layout/layout';
-import '../style.css';
 
-const Home = () => (
+const Login = () => (
     <Layout>
-        <h1>Nieuwe app jo</h1>
+        <h1>Login</h1>
     </Layout>
-)
-export default Home;
+);
+
+export default Login;

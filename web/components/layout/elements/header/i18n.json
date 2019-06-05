@@ -1,6 +1,8 @@
 {
+    "app": "App yo",
     "home": "Home",
     "register": "Registreren",
     "profile": "Profiel",
-    "logout": "Uitloggen"
+    "logout": "Uitloggen",
+    "login": "Login"
 }
