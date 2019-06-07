@@ -8,10 +8,8 @@ router.get('/', [checkJwt], UserController.getAllUsers);
 
 router.get('/:id([0-9]+)', [checkJwt], UserController.getUserById);
 
-router.post('/', [checkJwt], UserController.createUser);
+router.post('/', UserController.createUser);
 
-router.patch('/:id[0-9]+)', [checkJwt], UserController.editUser);
-
-router.delete('/:id[0-9]+)', [checkJwt], UserController.removeUser);
+router.patch('/:id([0-9]+)', [checkJwt], UserController.editUser);
 
 export default router;

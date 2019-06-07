@@ -1,13 +1,12 @@
 import 'reflect-metadata';
 import * as express from 'express';
-import { Request, Response } from 'express';
 import { createConnection } from 'typeorm';
 import * as bodyParser from 'body-parser';
 import * as helmet from 'helmet';
 import * as cors from 'cors';
 import routes from './routes';
 
-const { port = 3001 } = process.env;
+const { port = 3002 } = process.env;
 
 createConnection()
     .then(async connection => {

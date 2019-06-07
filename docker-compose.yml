@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+    nginx:
+        image: nginx
+        build: ./nginx
+        volumes:
+          - ./nginx:/etc/app
+        restart: always
+        links:
+            - api
+            - web
+        ports:
+            - 3000:443
+        command: /bin/sh -c "cp /etc/app/nginx.local.conf /etc/nginx/nginx.conf && cp /etc/app/localhost.crt /etc/nginx/localhost.crt && cp /etc/app/localhost.key /etc/nginx/localhost.key && nginx -g 'daemon off;'"
+
+    api:
+        build:
+          context: ./api
+          dockerfile: Dockerfile
+        volumes:
+            - ./api:/app
+        ports:
+            - 3002:3002
+        env_file:
+            - ./api/.env
+        links:
+            - database
+        command: ['npm', 'start']
+        
+    web:
+        build:
+          context: ./web
+          dockerfile: Dockerfile
+        env_file:
+            - ./web/.env
+        links:
+          - api
+        ports:
+          - 3001:3001
+        volumes:
+          - ./web:/app
+        command: npm run dev
+
+    database:
+        image: postgres:9.6-alpine
+        ports:
+            - 11543:5432
+        volumes:
+            - database-data:/var/lib/postgresql/data
+
+volumes:
+    database-data: {}

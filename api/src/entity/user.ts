@@ -1,5 +1,5 @@
 import { Entity, Column, PrimaryGeneratedColumn, Unique, CreateDateColumn } from 'typeorm';
-import { Length, IsNotEmpty } from 'class-validator';
+import { Length } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 
 @Entity()

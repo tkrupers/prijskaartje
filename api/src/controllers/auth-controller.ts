@@ -10,7 +10,7 @@ export default class AuthController {
         const { username, password } = req.body;
 
         if (!(username && password)) {
-           return res.status(400);
+        res.status(400).send();
         }
 
         let user: User;
@@ -20,11 +20,11 @@ export default class AuthController {
                 where: { username },
             });
         } catch (error) {
-            return res.status(401);
+            res.status(401).send();
         }
 
         if (!user.checkIfPasswordIsValid(password)) {
-            return res.status(401);
+            res.status(401).send();
         }
 
         const token = jwt.sign(
@@ -33,7 +33,12 @@ export default class AuthController {
             { expiresIn: '1h' },
         );
 
-        return res.send(token);
+        res.cookie('jwt', token, { httpOnly: true, secure: false });
+
+        return res.send({
+            loggedIn: true,
+            username,
+        });
     };
 
     public static getUserById = async (req: Request, res: Response) => {
