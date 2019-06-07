@@ -1,12 +1,12 @@
-import * as React from 'react';
+import { NextFC } from 'next';
 import Layout from '../components/layout/layout';
 import { HeadMeta } from '../types/meta';
 
-export interface RegisterProps {
+export interface Props {
     headMeta: HeadMeta;
 }
 
-const Register: React.FC<RegisterProps> = ({ headMeta }) => (
+const Register: NextFC<Props> = ({ headMeta }) => (
     <Layout {...headMeta}>
         <h1>Register</h1>
     </Layout>

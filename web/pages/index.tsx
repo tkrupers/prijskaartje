@@ -1,13 +1,14 @@
 import * as React from 'react';
+import { NextFC } from 'next';
 import Layout from '../components/layout/layout';
 import '../style.css';
 import { HeadMeta } from '../types/meta';
 
-export interface HomeProps {
+export type Props = {
     headMeta: HeadMeta;
 }
 
-const Home: React.FC<HomeProps> = ({ headMeta }) => (
+const Home: NextFC<Props> = ({ headMeta }) => (
     <Layout {...headMeta}>
         <h1>Nieuwe app jo</h1>
     </Layout>
