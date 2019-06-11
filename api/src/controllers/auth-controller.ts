@@ -33,7 +33,7 @@ export default class AuthController {
             { expiresIn: '1h' },
         );
 
-        res.cookie('jwt', token, { httpOnly: true, secure: false });
+        res.cookie(process.env.TOKEN_NAME, token, { httpOnly: true, secure: false });
 
         return res.send({
             loggedIn: true,

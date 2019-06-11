@@ -1,4 +1,3 @@
-FROM nginx
+FROM nginx:1.16
+
 COPY nginx.local.conf /etc/nginx/nginx.conf
-COPY localhost.crt /etc/nginx/localhost.crt
-COPY localhost.key /etc/nginx/localhost.key

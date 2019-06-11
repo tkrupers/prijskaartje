@@ -4,6 +4,7 @@ import { createConnection } from 'typeorm';
 import * as bodyParser from 'body-parser';
 import * as helmet from 'helmet';
 import * as cors from 'cors';
+import * as morgan from 'morgan';
 import routes from './routes';
 
 const { port = 3002 } = process.env;
@@ -14,6 +15,7 @@ createConnection()
 
         app.set('env', process.env.APP_ENV);
         app.use(cors());
+        app.use(morgan('dev'));
         app.use(helmet());
         app.use(bodyParser.json());
 

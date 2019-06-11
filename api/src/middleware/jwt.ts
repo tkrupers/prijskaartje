@@ -10,7 +10,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
         jwtPayload = jwt.verify(token, config.jwtSecret);
         res.locals.jwtPayload = jwtPayload;
     } catch (error) {
-        return res.status(401).send();
+        return res.status(403).send();
     }
 
     const { userId, username } = jwtPayload;

@@ -1,3 +1,5 @@
+import fetch from 'isomorphic-unfetch';
+
 type SignupProps = {
     username: string;
     password: string;
@@ -16,6 +18,10 @@ const handleResponse = (response: any): Object | Error => {
                     throw new Error('wrong username or password');
                 }
 
+                if (response.status === 403) {
+                    throw new Error('geen toegang');
+                }
+
                 throw new Error(response.status);
             })
             .then(({ message }: { message: string }) => {
@@ -26,13 +32,31 @@ const handleResponse = (response: any): Object | Error => {
     return response.json();
 };
 
-export const useSignUp = async ({ username, password }: SignupProps) => {
-    const result = await fetch(isomorphicEndpoint('/user'), {
-        method: 'POST',
+
+export const getFetch = (path: string, init: any = {}, jwtToken?: string) => {
+    const defaultInit = {
+        method: 'GET',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
         },
+    };
+
+    const combinedInit = {
+        ...defaultInit,
+        ...init,
+        headers: {
+            ...defaultInit.headers,
+            ...init.headers,
+        },
+    };
+
+    return fetch(path, combinedInit)
+}
+
+export const useSignUp = async ({ username, password }: SignupProps) => {
+    const result = await getFetch(isomorphicEndpoint('/user'), {
+        method: 'POST',
         body: JSON.stringify({ username, password }),
     });
 
@@ -40,14 +64,17 @@ export const useSignUp = async ({ username, password }: SignupProps) => {
 };
 
 export const useLogin = async ({ username, password }: LoginProps) => {
-    const result = await fetch(isomorphicEndpoint('/auth/login'), {
+    const result = await getFetch(isomorphicEndpoint('/auth/login'), {
         method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json',
-        },
         body: JSON.stringify({ username, password }),
     });
+
+    return await handleResponse(result);
+};
+
+
+export const testFetch = async () => {
+    const result = await getFetch(isomorphicEndpoint('/auth/test'));
 
     return await handleResponse(result);
 };
