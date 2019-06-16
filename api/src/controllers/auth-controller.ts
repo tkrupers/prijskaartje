@@ -4,20 +4,19 @@ import * as jwt from 'jsonwebtoken';
 import config from '../config/config';
 import { User } from '../entity/user';
 
-
 export default class AuthController {
     public static login = async (req: Request, res: Response) => {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
-        if (!(username && password)) {
-        res.status(400).send();
+        if (!(email && password)) {
+            res.status(400).send();
         }
 
         let user: User;
 
         try {
             user = await getRepository(User).findOneOrFail({
-                where: { username },
+                where: { email },
             });
         } catch (error) {
             res.status(401).send();
@@ -28,18 +27,34 @@ export default class AuthController {
         }
 
         const token = jwt.sign(
-            { userId: user.id, username: user.username },
+            { userId: user.id, email: user.email },
             config.jwtSecret,
             { expiresIn: '1h' },
         );
 
-        res.cookie(process.env.TOKEN_NAME, token, { httpOnly: true, secure: false });
+        res.cookie(process.env.TOKEN_NAME, token, {
+            httpOnly: true,
+            secure: true,
+        });
+
+        res.cookie(
+            'isSignedIn',
+            true,
+            {
+                httpOnly: false,
+                secure: true,
+            },
+        );
 
         return res.send({
             loggedIn: true,
-            username,
+            user,
         });
     };
+
+    public static logout = async (req: Request, res: Response) => {
+        
+    }
 
     public static getUserById = async (req: Request, res: Response) => {
         const user = await getRepository(User).findOne(req.params.id);

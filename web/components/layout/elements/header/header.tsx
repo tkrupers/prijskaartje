@@ -1,16 +1,31 @@
 import * as React from 'react';
 import Link from 'next/link';
-
+import { NextFC } from 'next';
+import * as Cookie from 'js-cookie';
+import { isBrowser } from '../../../../utils/browser';
+import { useSignOut } from '../../../../services/auth.service';
+const { useState, useEffect, useCallback } = React;
 const i18n = require('./i18n.json');
 
 export interface HeaderProps {
     isAuthorized?: boolean;
 }
 
-const logout = () => console.log('logout');
+const Header: NextFC<HeaderProps> = () => {
+    const [active, setActive] = useState(false);
+    const [authorized, setAuthorized] = useState(false);
 
-const Header: React.FC<HeaderProps> = ({ isAuthorized }) => {
-    const [active, setActive] = React.useState(false);
+    useEffect(() => {
+        if (isBrowser()) {
+            const cookies = Cookie.get();
+            const loggedIn = cookies.isSignedIn === 'true';
+            setAuthorized(loggedIn);
+        }
+    });
+
+    const logout = useCallback(() => {
+        useSignOut();
+    }, []);
 
     return (
         <header>
@@ -46,24 +61,19 @@ const Header: React.FC<HeaderProps> = ({ isAuthorized }) => {
                     <div className="navbar-end">
                         <div className="navbar-item">
                             <div className="buttons">
-                                {isAuthorized ? (
+                                {authorized ? (
                                     <React.Fragment>
-                                        <li>
-                                            <Link href="/profiel">
-                                                <a>{i18n.profile}</a>
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <button>
-                                                <a
-                                                    className="button is-light"
-                                                    onClick={logout}
-                                                >
-                                                    {i18n.logout}
-                                                </a>
-                                                >
-                                            </button>
-                                        </li>
+                                        <Link href="/profile">
+                                            <a className="button is-primary">
+                                                {i18n.profile}
+                                            </a>
+                                        </Link>
+                                        <a
+                                            className="button is-light"
+                                            onClick={logout}
+                                        >
+                                            {i18n.logout}
+                                        </a>
                                     </React.Fragment>
                                 ) : (
                                     <React.Fragment>

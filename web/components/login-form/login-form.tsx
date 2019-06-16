@@ -2,17 +2,18 @@ import { NextFC } from 'next';
 import * as React from 'react';
 import { useState, useCallback } from 'react';
 import { useLogin } from '../../services/auth.service';
+import Router from 'next/router';
 
 const i18n = require('./i18n.json');
 
 const LoginForm: NextFC = () => {
-    const [ username, setUsername ] = useState('');
+    const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ error, setError ] = useState('');
 
-    const updateUsername = useCallback(({ target }) => {
+    const updateEmail = useCallback(({ target }) => {
         setError('');
-        setUsername(target.value);
+        setEmail(target.value);
     }, []); 
 
     const updatePassword = useCallback(({ target }) => {
@@ -21,14 +22,14 @@ const LoginForm: NextFC = () => {
     }, []);
 
     const mayLogin = useCallback(() => {
-        return (username && password);
-    }, [username, password])
+        return (email && password);
+    }, [email, password])
 
     const handleLogin = useCallback(() => {
-        useLogin({ username, password }).then((result) => {
-            console.log(result);
+        useLogin({ email, password }).then((result) => {
+            Router.push('/profile');
         }).catch(error => setError(error.message));
-    }, [username, password]);
+    }, [email, password]);
 
     return (
         <React.Fragment>
@@ -37,8 +38,8 @@ const LoginForm: NextFC = () => {
                     <input
                         className="input"
                         type="email"
-                        placeholder={i18n.username}
-                        onChange={updateUsername}
+                        placeholder={i18n.email}
+                        onChange={updateEmail}
                     />
                     <span className="icon is-small is-left">
                         <i className="fas fa-envelope" />

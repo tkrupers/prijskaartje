@@ -1,5 +1,14 @@
+export type UserName = {
+    firstName?: string;
+    lastName?: string;
+}
+
 export type User = {
     id: number;
-    username: string;
-    active?: boolean;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
+    active: boolean;
+    name?: UserName;
+    birth?: Date;
 }

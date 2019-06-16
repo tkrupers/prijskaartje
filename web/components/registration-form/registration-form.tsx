@@ -5,14 +5,14 @@ import { useSignUp } from '../../services/auth.service';
 const i18n = require('./i18n.json');
 
 const RegistrationForm: NextFC = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirm, setPasswordConfirm] = useState('');
     const [error, setError] = useState('');
 
-    const updateUsername = useCallback(({ target }) => {
+    const updateEmail = useCallback(({ target }) => {
         setError('');
-        setUsername(target.value);
+        setEmail(target.value);
     }, []);
 
     const updatePassword = useCallback(({ target }) => {
@@ -26,14 +26,14 @@ const RegistrationForm: NextFC = () => {
     }, []);
 
     const maySignUp = useCallback(() => {
-        return !!(username && password && password === passwordConfirm);
-    }, [username, password, passwordConfirm]);
+        return !!(email && password && password === passwordConfirm);
+    }, [email, password, passwordConfirm]);
 
     const handleSignup = useCallback(() => {
-        useSignUp({ username, password }).then((result) => {
-            console.log(result);
+        useSignUp({ email, password }).then((result) => {
+            setError(result.isEmail)
         }).catch(error => setError(error.message));
-    }, [username, password]);
+    }, [email, password]);
 
     return (
         <React.Fragment>
@@ -42,8 +42,8 @@ const RegistrationForm: NextFC = () => {
                     <input
                         className="input"
                         type="email"
-                        placeholder={i18n.username}
-                        onChange={updateUsername}
+                        placeholder={i18n.email}
+                        onChange={updateEmail}
                     />
                     <span className="icon is-small is-left">
                         <i className="fas fa-envelope" />

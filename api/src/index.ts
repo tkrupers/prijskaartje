@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import * as express from 'express';
 import { createConnection } from 'typeorm';
+import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as helmet from 'helmet';
 import * as cors from 'cors';
@@ -18,6 +19,7 @@ createConnection()
         app.use(morgan('dev'));
         app.use(helmet());
         app.use(bodyParser.json());
+        app.use(cookieParser());
 
         app.use('/', routes);
 

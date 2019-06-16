@@ -1,16 +1,38 @@
-import { Entity, Column, PrimaryGeneratedColumn, Unique, CreateDateColumn } from 'typeorm';
-import { Length } from 'class-validator';
+import {
+    Entity,
+    Column,
+    PrimaryGeneratedColumn,
+    Unique,
+    CreateDateColumn,
+} from 'typeorm';
+import { Length, IsEmail, IsDate } from 'class-validator';
 import * as bcrypt from 'bcryptjs';
 
+export class Name {
+    @Column({ nullable: true })
+    firstName: string;
+
+    @Column({ nullable: true })
+    lastName: string;
+}
+
+export class Profile {
+    @Column(type => Name)
+    name: Name;
+
+    @Column({ nullable: true })
+    birth: Date;
+}
+
 @Entity()
-@Unique(['username'])
-export class User {
+@Unique(['email'])
+export class User extends Profile {
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
-    @Length(4, 20)
-    username: string;
+    @IsEmail()
+    email: string;
 
     @Column()
     @Length(4, 100)
@@ -23,6 +45,9 @@ export class User {
     @Column()
     @CreateDateColumn()
     updatedAt: Date;
+
+    @Column({ default: true })
+    active: boolean;
 
     hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8);
