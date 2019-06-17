@@ -5,18 +5,17 @@ import { User } from '../entity/user';
 import { validate } from 'class-validator';
 import { handleValidationErrors } from '../helpers/error.helper';
 import config from '../config/config';
+import { getTokenPayload } from '../helpers/getTokenPayload';
 
 export default class UserController {
     public static getMe = async (req: Request, res: Response) => {
-        const token = <string>req.cookies[process.env.TOKEN_NAME];
-
-        const jwtPayload: any = jwt.verify(token, config.jwtSecret);
+        const jwtPayload: any = getTokenPayload(req);
 
         try {
             const user = await getRepository(User).findOneOrFail({
                 where: { email: jwtPayload.email },
             });
-            res.json(user);
+            res.send(user);
         } catch (error) {
             return res.status(404).send('no user');
         }
@@ -49,21 +48,48 @@ export default class UserController {
 
         if (errors.length > 0) {
             const simpleErrors = handleValidationErrors(errors);
-            return res.status(400).json(simpleErrors);
+            return res.status(400).send(simpleErrors);
         }
 
         try {
-            const results = await getRepository(User).save(user);
+            const savedUser = await getRepository(User).save(user);
 
-            return res.status(201).send(results);
+            const token = jwt.sign(
+                { userId: savedUser.id, email: savedUser.email },
+                config.jwtSecret,
+                { expiresIn: '1h' },
+            );
+
+            res.cookie(process.env.TOKEN_NAME, token, {
+                httpOnly: true,
+                secure: true,
+            });
+
+            res.cookie('isSignedIn', true, {
+                httpOnly: false,
+                secure: true,
+            });
+
+            return res.send({
+                loggedIn: true,
+                user,
+            });
         } catch (error) {
             return res.status(409).send('email already in use');
         }
     };
-    public static editUser = async (req: Request, res: Response) => {
-        const user = await getRepository(User).findOne(req.params.id);
-        await getRepository(User).merge(user, req.body);
-        const results = await getRepository(User).save(user);
-        return res.send(results);
+    public static editMe = async (req: Request, res: Response) => {
+        const jwtPayload: any = getTokenPayload(req);
+
+        try {
+            const user = await getRepository(User).findOneOrFail({
+                where: { email: jwtPayload.email }
+            });
+            await getRepository(User).merge(user, req.body);
+            const results = await getRepository(User).save(user);
+            return res.send(results);
+        } catch (error) {
+            return res.status(400).send('something went wrong')
+        }
     };
 }

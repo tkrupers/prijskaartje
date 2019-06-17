@@ -10,6 +10,6 @@ router.get('/:id([0-9]+)', [checkJwt], UserController.getUserById);
 
 router.post('/', UserController.createUser);
 
-router.patch('/:id([0-9]+)', [checkJwt], UserController.editUser);
+router.patch('/', [checkJwt], UserController.editMe);
 
 export default router;

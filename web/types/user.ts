@@ -1,7 +1,12 @@
 export type UserName = {
     firstName?: string;
     lastName?: string;
-}
+};
+
+export type EmailPreferences = {
+    promotions: boolean;
+    news: boolean;
+};
 
 export type User = {
     id: number;
@@ -10,5 +15,6 @@ export type User = {
     updatedAt: Date;
     active: boolean;
     name?: UserName;
-    birth?: Date;
-}
+    birth?: string;
+    emailPreferences: EmailPreferences;
+};

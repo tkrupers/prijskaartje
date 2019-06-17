@@ -24,6 +24,14 @@ export class Profile {
     birth: Date;
 }
 
+export class EmailPreferences {
+    @Column({ default: true })
+    promotions: boolean;
+
+    @Column({ default: true })
+    news: boolean;
+}
+
 @Entity()
 @Unique(['email'])
 export class User extends Profile {
@@ -48,6 +56,9 @@ export class User extends Profile {
 
     @Column({ default: true })
     active: boolean;
+
+    @Column(type => EmailPreferences)
+    emailPreferences: EmailPreferences
 
     hashPassword() {
         this.password = bcrypt.hashSync(this.password, 8);

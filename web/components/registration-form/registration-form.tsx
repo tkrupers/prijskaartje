@@ -2,6 +2,7 @@ import * as React from 'react';
 import { NextFC } from 'next';
 import { useState, useCallback } from 'react';
 import { useSignUp } from '../../services/auth.service';
+import Router from 'next/router';
 const i18n = require('./i18n.json');
 
 const RegistrationForm: NextFC = () => {
@@ -30,9 +31,13 @@ const RegistrationForm: NextFC = () => {
     }, [email, password, passwordConfirm]);
 
     const handleSignup = useCallback(() => {
-        useSignUp({ email, password }).then((result) => {
-            setError(result.isEmail)
-        }).catch(error => setError(error.message));
+        useSignUp({ email, password })
+            .then(result => {
+                if (result.loggedIn) {
+                    Router.push('/profile');
+                }
+            })
+            .catch(error => setError(error.message));
     }, [email, password]);
 
     return (

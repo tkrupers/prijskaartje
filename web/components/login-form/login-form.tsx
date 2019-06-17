@@ -7,14 +7,14 @@ import Router from 'next/router';
 const i18n = require('./i18n.json');
 
 const LoginForm: NextFC = () => {
-    const [ email, setEmail ] = useState('');
-    const [ password, setPassword ] = useState('');
-    const [ error, setError ] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const updateEmail = useCallback(({ target }) => {
         setError('');
         setEmail(target.value);
-    }, []); 
+    }, []);
 
     const updatePassword = useCallback(({ target }) => {
         setError('');
@@ -22,13 +22,17 @@ const LoginForm: NextFC = () => {
     }, []);
 
     const mayLogin = useCallback(() => {
-        return (email && password);
-    }, [email, password])
+        return email && password;
+    }, [email, password]);
 
     const handleLogin = useCallback(() => {
-        useLogin({ email, password }).then((result) => {
-            Router.push('/profile');
-        }).catch(error => setError(error.message));
+        useLogin({ email, password })
+            .then(result => {
+                if (result.loggedIn) {
+                    Router.push('/profile');
+                }
+            })
+            .catch(error => setError(error.message));
     }, [email, password]);
 
     return (
@@ -73,7 +77,7 @@ const LoginForm: NextFC = () => {
             </div>
             {error}
         </React.Fragment>
-    )
-}
+    );
+};
 
 export default LoginForm;

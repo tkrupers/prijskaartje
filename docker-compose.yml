@@ -9,48 +9,70 @@ services:
           - ./nginx:/etc/nginx
         depends_on:
           - web
+          - api
+          - database
         restart: always
         links:
-            - api
-            - web
+          - api
+          - web
+          - database
         ports:
-            - 3000:443
+          - 3000:443
+          - 80:80
         command: /bin/bash -c "cp /etc/nginx/nginx.local.conf /etc/nginx/nginx.conf && nginx -g 'daemon off;'"
+        networks:
+          - app-network
 
     api:
         build:
           context: ./api
           dockerfile: Dockerfile
         volumes:
-            - ./api:/app
+          - ./api:/app
         ports:
-            - 3002:3002
+          - 3002:3002
+        expose:
+          - 3002
         env_file:
-            - ./api/.env
+          - ./api/.env
         links:
-            - database
+          - database
+        depends_on:
+          - database
         command: ['npm', 'start']
+        networks:
+          - app-network
         
     web:
         build:
           context: ./web
           dockerfile: Dockerfile
         env_file:
-            - ./web/.env
+          - ./web/.env
         links:
           - api
         ports:
           - 3001:3001
+        expose:
+          - 3001
         volumes:
           - ./web:/app
         command: npm run dev
+        networks:
+          - app-network
 
     database:
         image: postgres:9.6-alpine
         ports:
-            - 11543:5432
+          - 11543:5432
         volumes:
             - database-data:/var/lib/postgresql/data
+        networks:
+          - app-network
 
 volumes:
     database-data: {}
+
+networks:
+  app-network:
+    driver: bridge 
