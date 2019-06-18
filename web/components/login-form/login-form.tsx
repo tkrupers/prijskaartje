@@ -7,25 +7,22 @@ import Router from 'next/router';
 const i18n = require('./i18n.json');
 
 const LoginForm: NextFC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [values, setValues] = useState({
+        email: '',
+        password: '',
+    });
     const [error, setError] = useState('');
 
-    const updateEmail = useCallback(({ target }) => {
-        setError('');
-        setEmail(target.value);
-    }, []);
-
-    const updatePassword = useCallback(({ target }) => {
-        setError('');
-        setPassword(target.value);
-    }, []);
-
     const mayLogin = useCallback(() => {
-        return email && password;
-    }, [email, password]);
+        return (
+            values.email &&
+            values.email.length > 3 &&
+            (values.password && values.password.length > 3)
+        );
+    }, [values]);
 
     const handleLogin = useCallback(() => {
+        const { email, password } = values;
         useLogin({ email, password })
             .then(result => {
                 if (result.loggedIn) {
@@ -33,7 +30,25 @@ const LoginForm: NextFC = () => {
                 }
             })
             .catch(error => setError(error.message));
-    }, [email, password]);
+    }, [values]);
+
+    const handleChange = useCallback(
+        ({ target }: React.ChangeEvent<HTMLInputElement>) => {
+            const { name, value } = target;
+            setError('');
+            setValues({ ...values, [name]: value });
+        },
+        [values],
+    );
+
+    const handleKeyPress = useCallback(
+        ({ key }: React.KeyboardEvent<HTMLInputElement>) => {
+            if (key === 'Enter') {
+                handleLogin();
+            }
+        },
+        [values],
+    );
 
     return (
         <React.Fragment>
@@ -42,8 +57,10 @@ const LoginForm: NextFC = () => {
                     <input
                         className="input"
                         type="email"
+                        name="email"
                         placeholder={i18n.email}
-                        onChange={updateEmail}
+                        onKeyPress={handleKeyPress}
+                        onChange={handleChange}
                     />
                     <span className="icon is-small is-left">
                         <i className="fas fa-envelope" />
@@ -55,8 +72,10 @@ const LoginForm: NextFC = () => {
                     <input
                         className="input"
                         type="password"
+                        name="password"
                         placeholder={i18n.password}
-                        onChange={updatePassword}
+                        onKeyPress={handleKeyPress}
+                        onChange={handleChange}
                     />
                     <span className="icon is-small is-left">
                         <i className="fas fa-lock" />

@@ -33,6 +33,7 @@ export default class AuthController {
         );
 
         res.cookie(process.env.TOKEN_NAME, token, {
+            maxAge: (60 * 60 * 1000), // 1h
             httpOnly: true,
             secure: true,
         });
@@ -41,6 +42,7 @@ export default class AuthController {
             'isSignedIn',
             true,
             {
+                maxAge: (60 * 60 * 1000), // 1h
                 httpOnly: false,
                 secure: true,
             },
@@ -53,7 +55,7 @@ export default class AuthController {
     };
 
     public static logout = async (req: Request, res: Response) => {
-        
+
     }
 
     public static getUserById = async (req: Request, res: Response) => {

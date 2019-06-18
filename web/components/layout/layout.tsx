@@ -34,9 +34,9 @@ const Layout: React.FC<LayoutProps> = ({
             <title>{title}</title>
         </Head>
         <Header />
-        <main className="section">
+        <section className="section">
             <div className="container">{children}</div>
-        </main>
+        </section>
 
         <Footer />
     </React.Fragment>

@@ -61,11 +61,13 @@ export default class UserController {
             );
 
             res.cookie(process.env.TOKEN_NAME, token, {
+                maxAge: (60 * 60 * 1000), // 1h
                 httpOnly: true,
                 secure: true,
             });
 
             res.cookie('isSignedIn', true, {
+                maxAge: (60 * 60 * 1000), // 1h
                 httpOnly: false,
                 secure: true,
             });
