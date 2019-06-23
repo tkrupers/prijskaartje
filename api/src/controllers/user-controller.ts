@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { getRepository } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import { User } from '../entity/user';
@@ -8,7 +8,11 @@ import config from '../config/config';
 import { getTokenPayload } from '../helpers/getTokenPayload';
 
 export default class UserController {
-    public static getMe = async (req: Request, res: Response) => {
+    public static getMe = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         const jwtPayload: any = getTokenPayload(req);
 
         try {
@@ -19,18 +23,30 @@ export default class UserController {
         } catch (error) {
             return res.status(404).send('no user');
         }
+
+        next();
     };
 
-    public static getUserById = async (req: Request, res: Response) => {
+    public static getUserById = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         try {
             const user = await getRepository(User).findOne(req.params.id);
             return res.send(user);
         } catch (error) {
             return res.status(404).send('no user');
         }
+
+        next();
     };
 
-    public static createUser = async (req: Request, res: Response) => {
+    public static createUser = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         const { email, password } = req.body;
 
         if (!(email && password)) {
@@ -61,37 +77,46 @@ export default class UserController {
             );
 
             res.cookie(process.env.TOKEN_NAME, token, {
-                maxAge: (60 * 60 * 1000), // 1h
+                maxAge: 60 * 60 * 1000, // 1h
                 httpOnly: true,
                 secure: true,
             });
 
             res.cookie('isSignedIn', true, {
-                maxAge: (60 * 60 * 1000), // 1h
+                maxAge: 60 * 60 * 1000, // 1h
                 httpOnly: false,
                 secure: true,
             });
 
-            return res.send({
+            res.send({
                 loggedIn: true,
                 user,
             });
         } catch (error) {
-            return res.status(409).send('email already in use');
+            res.status(409).send('email already in use');
         }
+
+        next();
     };
-    public static editMe = async (req: Request, res: Response) => {
+    public static editMe = async (
+        req: Request,
+        res: Response,
+        next: NextFunction,
+    ) => {
         const jwtPayload: any = getTokenPayload(req);
 
         try {
             const user = await getRepository(User).findOneOrFail({
-                where: { email: jwtPayload.email }
+                where: { email: jwtPayload.email },
             });
             await getRepository(User).merge(user, req.body);
             const results = await getRepository(User).save(user);
-            return res.send(results);
+
+            res.send(results);
         } catch (error) {
-            return res.status(400).send('something went wrong')
+            res.status(400).send('something went wrong');
         }
+
+        next();
     };
 }
