@@ -63,6 +63,11 @@ const Header: NextFC<HeaderProps> = () => {
                             <div className="buttons">
                                 {authorized ? (
                                     <React.Fragment>
+                                        <Link href="/dashboard">
+                                            <a className="button is-primary">
+                                                {i18n.dashboard}
+                                            </a>
+                                        </Link>
                                         <Link href="/profile">
                                             <a className="button is-primary">
                                                 {i18n.profile}

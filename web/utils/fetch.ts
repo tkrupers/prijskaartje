@@ -20,6 +20,10 @@ if (!response.ok) {
                 throw new Error('geen toegang');
             }
 
+            if (response.status === 404) {
+                throw new Error('niets gevonden');
+            }
+
             if (response.status === 409) {
                 throw new Error('email al in gebruik');
             }

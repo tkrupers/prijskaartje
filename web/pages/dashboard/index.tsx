@@ -1,10 +1,9 @@
 import { NextFC } from 'next';
 import Layout from '../../components/layout/layout';
 import { HeadMeta } from '../../types/meta';
-import ProfileDetails from '../../components/profile-details/profile-details';
 import { withAuth } from '../../services/auth.service';
 import { User } from '../../types/user';
-import Hero from '../../components/hero/hero';
+import LineGraph from '../../components/graph/line/line-graph';
 
 export interface Props {
     headMeta: HeadMeta;
@@ -13,19 +12,15 @@ export interface Props {
 
 const i18n = require('./i18n.json');
 
-const Profile: NextFC<Props> = ({ headMeta, user }) => (
+const Dashboard: NextFC<Props> = ({ headMeta }) => (
     <Layout {...headMeta}>
-        <Hero
-            title={i18n.title}
-            subtitle=""
-            gradient={true}
-            color="dark"
-        />
-        <ProfileDetails user={user} />
+        <div style={{height: '500px'}}>
+            <LineGraph />
+        </div>
     </Layout>
 );
 
-Profile.getInitialProps = async () => ({
+Dashboard.getInitialProps = async () => ({
     headMeta: {
         canonical: '',
         description: '',
@@ -33,4 +28,4 @@ Profile.getInitialProps = async () => ({
     },
 });
 
-export default withAuth(Profile);
+export default withAuth(Dashboard);

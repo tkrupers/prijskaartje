@@ -26,7 +26,7 @@ const LoginForm: NextFC = () => {
         useLogin({ email, password })
             .then(result => {
                 if (result.loggedIn) {
-                    Router.push('/profile');
+                    Router.push('/dashboard');
                 }
             })
             .catch(error => setError(error.message));

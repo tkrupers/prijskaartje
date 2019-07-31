@@ -1,6 +1,7 @@
 {
-    "app": "App yo",
+    "app": "Prijskaartje",
     "home": "Home",
+    "dashboard": "Dashboard",
     "register": "Registreren",
     "profile": "Profiel",
     "logout": "Uitloggen",
